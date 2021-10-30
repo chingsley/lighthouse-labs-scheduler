@@ -1,8 +1,11 @@
 import React from 'react';
 import InterviewerListItem from './InterviewerListItem';
 
+import 'components/InterviewerList.scss';
+
 export default function InterviewerList(props) {
-  const { selectedInterviewerId, interviewers } = props;
+  const { selectedInterviewerId, interviewers, setSelectedInterviewerId } =
+    props;
 
   return (
     <section className='interviewers'>
@@ -15,7 +18,7 @@ export default function InterviewerList(props) {
               key={interviewer.id}
               {...interviewer}
               selected={selected}
-              setInterviewer={() => selectedInterviewerId(interviewer.id)}
+              setInterviewer={() => setSelectedInterviewerId(interviewer.id)}
             />
           );
         })}
