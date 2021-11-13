@@ -8,6 +8,17 @@ export function getAppointmentsForDay(state, day) {
   return dayObj.appointments.map((id) => appointments[id]);
 }
 
+
+export function getInterviewersForDay(state, day) {
+  const { days, interviewers } = state;
+
+  const dayObj = days.find((d) => d.name.toLowerCase() === day.toLowerCase());
+
+  if (state.days.length === 0 || dayObj === undefined) return [];
+
+  return dayObj.interviewers.map((id) => interviewers[id]);
+}
+
 export function getInterview(state, appointmentInterview) {
   // returns null if no interview is booked
   if (!appointmentInterview) return null;
