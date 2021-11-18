@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Header from './Header';
 import Show from './Show';
 import Empty from './Empty';
+import Status from './Status';
+import Error from './Error';
 import Form from '../Form';
 
 import 'components/Appointment/styles.scss';
@@ -10,12 +12,15 @@ import useVisualMode from 'hooks/useVisualMode';
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
+const SAVING = "SAVING";
+const ERROR = "ERROR";
 
 
 
 export default function Appointment(props) {
   const { time, interview, interviewers } = props;
   const { mode, back, transition } = useVisualMode(interview ? SHOW : EMPTY);
+  const [error, setError] = useState('');
 
   const onCancel = () => {
     back();
@@ -27,11 +32,13 @@ export default function Appointment(props) {
       student: name,
       interviewer
     };
+    transition(SAVING);
     props.bookInterview(props.id, interview).then(res2 => {
-      console.log({ res2 });
       transition(SHOW);
-    }).catch(err2 => {
-      console.log({ err2 });
+    }).catch(err => {
+      // console.log({ err });
+      setError(err.response.data.error || 'something went wrong');
+      transition(ERROR, true);
     });
   }
 
@@ -49,6 +56,10 @@ export default function Appointment(props) {
           interviewers={interviewers}
           onSave={save}
         />;
+      case SAVING:
+        return <Status message='Saving' />;
+      case ERROR:
+        return <Error message={error} onClose={onCancel} />;
       default:
         return null;
     }
