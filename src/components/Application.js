@@ -41,13 +41,11 @@ export default function Application() {
       [id]: appointment
     };
 
-    return axios.put(`/api/appointments/${id}`, interview)
+    return axios.put(`/api/appointments/${id}`, { interview })
       .then((res) => {
-        console.log({ res });
         setState({ ...state, appointments });
         return res;
       }).catch(error => {
-        console.log({ error });
         throw error;
       });
   }
