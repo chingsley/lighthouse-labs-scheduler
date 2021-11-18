@@ -18,6 +18,7 @@ export default function Form(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    console.log('handleSubmit() called');
 
     props.onSave(student, interviewer);
   }

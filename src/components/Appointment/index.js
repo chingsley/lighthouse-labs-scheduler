@@ -21,6 +21,20 @@ export default function Appointment(props) {
     back();
   };
 
+  function save(name, interviewer) {
+    console.log('save() called');
+    const interview = {
+      student: name,
+      interviewer
+    };
+    props.bookInterview(props.id, interview).then(res2 => {
+      console.log({ res2 });
+      transition(SHOW);
+    }).catch(err2 => {
+      console.log({ err2 });
+    });
+  }
+
   const display = (mode) => {
     // console.log({ mode });
     switch (mode) {
@@ -33,6 +47,7 @@ export default function Appointment(props) {
           interviewers={[]}
           onCancel={onCancel}
           interviewers={interviewers}
+          onSave={save}
         />;
       default:
         return null;
