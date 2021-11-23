@@ -5,6 +5,7 @@ import Show from './Show';
 import Empty from './Empty';
 import Status from './Status';
 import Error from './Error';
+import Confirm from './Confirm';
 import Form from '../Form';
 
 import 'components/Appointment/styles.scss';
@@ -14,6 +15,7 @@ const SHOW = "SHOW";
 const CREATE = "CREATE";
 const SAVING = "SAVING";
 const ERROR = "ERROR";
+const CONFIRM = "CONFIRM";
 
 
 
@@ -46,21 +48,24 @@ export default function Appointment(props) {
   }
 
   const handleDelete = () => {
+    transition(SAVING);
     props.cancelInterview().then(() => {
       transition(EMPTY);
+    }).catch(error => {
+      console.log(error);
+      // trasition to error;
     });
   };
 
   const display = (mode) => {
-    console.log({ interview });
     switch (mode) {
       case EMPTY:
         return <Empty onAdd={() => transition(CREATE)} />;
       case SHOW:
-        return <Show {...interview} onDelete={handleDelete} />;
+        return <Show {...interview} onDelete={() => transition(CONFIRM)} />;
       case CREATE:
         return <Form
-          interviewers={[]}
+          // interviewers={[]}
           onCancel={onCancel}
           interviewers={interviewers}
           onSave={save}
@@ -69,6 +74,12 @@ export default function Appointment(props) {
         return <Status message='Saving' />;
       case ERROR:
         return <Error message={error} onClose={onCancel} />;
+      case CONFIRM:
+        return <Confirm
+          message={'Are you sure you want to delete this appointment?'}
+          onCancel={() => back()}
+          onConfirm={handleDelete}
+        />;
       default:
         return null;
     }
