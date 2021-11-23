@@ -27,7 +27,10 @@ export default function Appointment(props) {
   };
 
   function save(name, interviewer) {
-    console.log('save() called');
+    if (!name || !interviewer) {
+      console.log('Error: You must enter student name and choose an interviewer');
+      return;
+    }
     const interview = {
       student: name,
       interviewer
@@ -42,13 +45,19 @@ export default function Appointment(props) {
     });
   }
 
+  const handleDelete = () => {
+    props.cancelInterview().then(() => {
+      transition(EMPTY);
+    });
+  };
+
   const display = (mode) => {
-    // console.log({ mode });
+    console.log({ interview });
     switch (mode) {
       case EMPTY:
         return <Empty onAdd={() => transition(CREATE)} />;
       case SHOW:
-        return <Show {...interview} />;
+        return <Show {...interview} onDelete={handleDelete} />;
       case CREATE:
         return <Form
           interviewers={[]}

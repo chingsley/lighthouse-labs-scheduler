@@ -22,6 +22,8 @@ export default function Application() {
     interviewers: {},
   });
 
+  console.log({ state });
+
   const dailyAppointments = getAppointmentsForDay(state, state.selectedDay);
   const dailyInterviewers = getInterviewersForDay(state, state.selectedDay);
   // console.log('dailyAppointments = ', dailyAppointments);
@@ -30,7 +32,7 @@ export default function Application() {
     setState({ ...state, selectedDay });
   };
 
-  function bookInterview(id, interview) {
+  const bookInterview = (id, interview) => {
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
@@ -48,7 +50,24 @@ export default function Application() {
       }).catch(error => {
         throw error;
       });
-  }
+  };
+
+  const cancelInterview = (appointmentId) => {
+    return axios.delete(`/api/appointments/${appointmentId}`)
+      .then((res) => {
+        console.log('res = ', res);
+        setState(prev => {
+          // const { interview } = prev.appointments.find(id => id === appointmentId);
+          return {
+            ...prev,
+            appointments: { ...prev.appointments, [appointmentId]: { ...prev.appointments[appointmentId], interview: null } },
+          };
+        });
+        return res;
+      }).catch(error => {
+        console.log('error = ', error);
+      });
+  };
 
   useEffect(() => {
     Promise.all([
@@ -57,6 +76,7 @@ export default function Application() {
       axios.get('/api/interviewers'),
     ])
       .then((responses) => {
+        // console.log(responses);
         setState((prev) => ({
           ...prev,
           days: responses[0].data,
@@ -71,6 +91,7 @@ export default function Application() {
 
   const schedule = dailyAppointments.map((appointment) => {
     const interview = getInterview(state, appointment.interview);
+    console.log({ interview });
 
     return (
       <Appointment
@@ -80,6 +101,7 @@ export default function Application() {
         interview={interview}
         interviewers={dailyInterviewers}
         bookInterview={bookInterview}
+        cancelInterview={() => cancelInterview(appointment.id)}
       />
     );
   });
