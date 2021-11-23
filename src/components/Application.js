@@ -22,11 +22,9 @@ export default function Application() {
     interviewers: {},
   });
 
-  console.log({ state });
 
   const dailyAppointments = getAppointmentsForDay(state, state.selectedDay);
   const dailyInterviewers = getInterviewersForDay(state, state.selectedDay);
-  // console.log('dailyAppointments = ', dailyAppointments);
 
   const setSelectedDay = (selectedDay) => {
     setState({ ...state, selectedDay });
@@ -65,7 +63,7 @@ export default function Application() {
         });
         return res;
       }).catch(error => {
-        console.log('error = ', error);
+        throw error;
       });
   };
 
@@ -91,7 +89,6 @@ export default function Application() {
 
   const schedule = dailyAppointments.map((appointment) => {
     const interview = getInterview(state, appointment.interview);
-    console.log({ interview });
 
     return (
       <Appointment
