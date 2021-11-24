@@ -14,6 +14,7 @@ const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
 const SAVING = "SAVING";
+const DELETING = "DELETING";
 const ERROR = "ERROR";
 const CONFIRM = "CONFIRM";
 const EDIT = "EDIT";
@@ -40,18 +41,18 @@ export default function Appointment(props) {
       transition(SHOW);
     }).catch(err => {
       // console.log({ err });
-      setError(err.response.data.error || 'something went wrong');
+      setError(err.response.data.error || 'Failed to save Appointment');
       transition(ERROR, true);
     });
   };
 
   const handleDelete = () => {
-    transition(SAVING);
+    transition(DELETING, true); // we pass replace=true b/c we want to replace the last mode (CONFIRM) with SAVING. If there's an error, when we close error modal, we don't want to go back to CONFIRM mode, instead we want to go back to SHOW mode
     props.cancelInterview().then(() => {
       transition(EMPTY);
-    }).catch(error => {
-      console.log(error);
-      // trasition to error;
+    }).catch(err => {
+      setError(err.response.data.error || 'Could not cancel Appointment');
+      transition(ERROR, true);
     });
   };
 
@@ -81,7 +82,9 @@ export default function Appointment(props) {
           onSave={save}
         />;
       case SAVING:
-        return <Status message='Saving' />;
+        return <Status message={'Saving'} />;
+      case DELETING:
+        return <Status message={'Deleting'} />;
       case ERROR:
         return <Error message={error} onClose={onCancel} />;
       case CONFIRM:
