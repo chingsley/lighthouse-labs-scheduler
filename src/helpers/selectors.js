@@ -30,3 +30,15 @@ export function getInterview(state, appointmentInterview) {
     interviewer: state.interviewers[interviewerId],
   };
 }
+
+
+
+// export function getInterview(state, interview) {
+//   // returns null if no interview is booked
+//   if (!interview) return null;
+
+//   return {
+//     student: interview.student,
+//     interviewer: state.interviewers[interview.interviewer],
+//   };
+// }
