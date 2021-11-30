@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Header from './Header';
 import Show from './Show';
@@ -55,6 +55,15 @@ export default function Appointment(props) {
       transition(ERROR, true);
     });
   };
+
+  useEffect(() => {
+    if (mode === SHOW && !props.interview) {
+      transition(EMPTY);
+    }
+    if (mode === EMPTY && props.interview) {
+      transition(SHOW);
+    }
+  }, [props.interview, transition, mode]);
 
 
   const display = (mode) => {
