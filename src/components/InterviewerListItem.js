@@ -13,7 +13,7 @@ export default function InterviewerListItem(props) {
     <li
       className={InterviewerListItemClass}
       onClick={setInterviewer}
-      data-testid={name}
+      data-testid={'interviewer'}
     >
       <img
         className='interviewers__item-image'
