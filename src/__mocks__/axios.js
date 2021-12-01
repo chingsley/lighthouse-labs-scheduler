@@ -1,4 +1,4 @@
-const fixtures = {
+export const fixtures = {
   days: [
     {
       id: 1,

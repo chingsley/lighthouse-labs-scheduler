@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { render, cleanup } from '@testing-library/react';
-import { fireEvent } from '@testing-library/react';
+import { render, cleanup, fireEvent, prettyDOM } from '@testing-library/react';
 
 import Form from 'components/Form';
 import { STUDENT_NAME_REQUIRED } from 'constants/messages';
@@ -47,7 +46,6 @@ describe('Form', () => {
 
     expect(onSave).not.toHaveBeenCalled();
   });
-
   it('calls onSave function when the name is defined', () => {
     const onSave = jest.fn();
     const interview = {
@@ -75,7 +73,7 @@ describe('Form', () => {
   });
   it('submits the name entered by the user', () => {
     const onSave = jest.fn();
-    const { getByText, getByPlaceholderText, getByTestId } = render(
+    const { getByText, getByPlaceholderText, getAllByTestId } = render(
       <Form interviewers={interviewers} onSave={onSave} />
     );
 
@@ -85,26 +83,36 @@ describe('Form', () => {
     fireEvent.change(input, { target: { value: 'Lydia Miller-Jones' } });
     /**
      *  'selecting an interviewer' from test is made possible by
-     * adding a data attribute as: data-testid={name}  in the 'li'
+     * adding a data attribute as: data-testid={'interviewer'}  in the 'li'
      * element in InterviewerListItem
-     * where {name} is the name of the interviewer
      */
-    const testInterviewer = interviewers[0];
     // selecing an interviewer
-    fireEvent.click(getByTestId(testInterviewer.name));
+    const selectedInterviewer = getAllByTestId('interviewer')[0];
+    fireEvent.click(selectedInterviewer);
+    const selectedInterviewerName =
+      selectedInterviewer.lastChild.textContent.toString();
+    // console.log(prettyDOM(selectedInterviewer));
+    const selectedInterviewerId = interviewers.reduce((acc, interviewer) => {
+      if (
+        interviewer.name.toLowerCase() === selectedInterviewerName.toLowerCase()
+      ) {
+        acc = interviewer.id;
+      }
+      return acc;
+    }, null);
+    // console.log(selectedInterviewerName, selectedInterviewerId);
 
     fireEvent.click(getByText('Save'));
 
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith(
       'Lydia Miller-Jones',
-      testInterviewer.id
+      selectedInterviewerId
     );
   });
-
   it('can successfully save after trying to submit an empty student name', () => {
     const onSave = jest.fn();
-    const { getByText, getByPlaceholderText, queryByText, getByTestId } =
+    const { getByText, getByPlaceholderText, queryByText, getAllByTestId } =
       render(<Form interviewers={interviewers} onSave={onSave} />);
 
     fireEvent.click(getByText('Save'));
@@ -116,8 +124,19 @@ describe('Form', () => {
       target: { value: 'Lydia Miller-Jones' },
     });
 
-    const testInterviewer = interviewers[0];
-    fireEvent.click(getByTestId(testInterviewer.name));
+    const selectedInterviewer = getAllByTestId('interviewer')[0];
+    fireEvent.click(selectedInterviewer);
+    const selectedInterviewerName =
+      selectedInterviewer.lastChild.textContent.toString();
+    // console.log(prettyDOM(selectedInterviewer));
+    const selectedInterviewerId = interviewers.reduce((acc, interviewer) => {
+      if (
+        interviewer.name.toLowerCase() === selectedInterviewerName.toLowerCase()
+      ) {
+        acc = interviewer.id;
+      }
+      return acc;
+    }, null);
 
     fireEvent.click(getByText('Save'));
 
@@ -126,7 +145,7 @@ describe('Form', () => {
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith(
       'Lydia Miller-Jones',
-      testInterviewer.id
+      selectedInterviewerId
     );
   });
   it('calls onCancel and resets the input field', () => {
