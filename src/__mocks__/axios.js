@@ -1,4 +1,4 @@
-const fixtures = {
+export const fixtures = {
   days: [
     {
       id: 1,
@@ -78,5 +78,13 @@ export default {
         data: fixtures.interviewers,
       });
     }
+  }),
+  put: jest.fn((url, interview) => {
+    // console.log({ url, interview });
+    return Promise.resolve({
+      status: 200,
+      statusText: 'Ok',
+      data: { success: true },
+    });
   }),
 };
