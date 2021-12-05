@@ -63,7 +63,10 @@ export default function Appointment(props) {
         transition(EMPTY);
       })
       .catch((err) => {
-        setError(err.response.data.error || 'Could not cancel Appointment');
+        setError(
+          (err.response && err.response.data && err.response.data.error) ||
+            'Could not cancel Appointment'
+        );
         transition(ERROR, true);
       });
   };
