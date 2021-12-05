@@ -185,7 +185,9 @@ describe('<Application />', () => {
     ).toBeInTheDocument();
   });
   it('shows the save error when failing to save an appointment', async () => {
+    // 0. Mock the mock of axios 'put' to reject with an error
     axios.put.mockRejectedValueOnce('Something went wrong');
+
     // 1. Render the Application.
     const { container, debug } = render(<Application />);
 
@@ -229,6 +231,58 @@ describe('<Application />', () => {
     expect(getByAltText(appointment, 'Delete')).toBeInTheDocument();
 
     // 10. Check that the DayListItem with the text "Monday" still has the text "1 spot remaining".
+    const daylistItems = getAllByTestId(container, 'day');
+    const daylistItemMonday = daylistItems.find((dayListItem) =>
+      queryByText(dayListItem, 'Monday')
+    );
+    expect(
+      getByText(daylistItemMonday, '1 spot remaining')
+    ).toBeInTheDocument();
+  });
+  it('shows the delete error when failing to delete an existing appointment', async () => {
+    // 0. Mock the mock of axios 'delete' to reject with an error
+    axios.delete.mockRejectedValueOnce('Something went wrong');
+
+    // 1. Render the Application.
+    const { container, debug } = render(<Application />);
+
+    // 2. Wait until the text "Archie Cohen" is displayed.
+    await waitForElement(() => getByText(container, 'Archie Cohen'));
+
+    // // 3. Click the "Delete" button on the booked appointment.
+    const appointments = getAllByTestId(container, 'appointment');
+    const appointment = appointments.find((appntmt) =>
+      queryByText(appntmt, 'Archie Cohen')
+    );
+    fireEvent.click(getByAltText(appointment, 'Delete'));
+
+    // 4. Check that the confirmation message is shown.
+    expect(
+      getByText(
+        appointment,
+        /Are you sure you want to delete this appointment?/i
+      )
+    ).toBeInTheDocument();
+
+    // 5. Click the "Confirm" button on the confirmation.
+    fireEvent.click(getByText(appointment, 'Confirm'));
+
+    // 6. Check that the element with the text "Deleting" is displayed.
+    expect(getByText(appointment, 'Deleting')).toBeInTheDocument();
+
+    // 7. Wait until the 'Deleting' status leaves the DOM, then check that error message is shown
+    await waitForElementToBeRemoved(() => getByText(appointment, 'Deleting'));
+    expect(
+      getByText(appointment, /Could not cancel Appointment/i)
+    ).toBeInTheDocument();
+
+    // 8. click the 'Cancel' button on the form, and expect to return to show mode
+    fireEvent.click(getByAltText(appointment, 'Close'));
+    expect(getByText(appointment, 'Archie Cohen')).toBeInTheDocument();
+    expect(getByAltText(appointment, 'Edit')).toBeInTheDocument();
+    expect(getByAltText(appointment, 'Delete')).toBeInTheDocument();
+
+    // 9. Check that the DayListItem with the text "Monday" still has the text "1 spot remaining".
     const daylistItems = getAllByTestId(container, 'day');
     const daylistItemMonday = daylistItems.find((dayListItem) =>
       queryByText(dayListItem, 'Monday')
