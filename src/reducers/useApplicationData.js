@@ -1,11 +1,9 @@
-
 import { useEffect, useReducer } from 'react';
 import axios from 'axios';
 
-
-const SET_DAY = "SET_DAY";
-const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-const SET_INTERVIEW = "SET_INTERVIEW";
+const SET_DAY = 'SET_DAY';
+const SET_APPLICATION_DATA = 'SET_APPLICATION_DATA';
+const SET_INTERVIEW = 'SET_INTERVIEW';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -30,8 +28,6 @@ function reducer(state, action) {
   }
 }
 
-
-
 export default function useApplicationData() {
   const [state, dispatch] = useReducer(reducer, {
     selectedDay: 'Monday',
@@ -44,29 +40,37 @@ export default function useApplicationData() {
     dispatch({ type: SET_DAY, value: selectedDay });
   };
 
-  const bookInterview = (id, interview) => {
+  const bookInterview = (id, interview, isEditing) => {
     const appointment = {
       ...state.appointments[id],
-      interview: { ...interview }
+      interview: { ...interview },
     };
 
     const appointments = {
       ...state.appointments,
-      [id]: appointment
+      [id]: appointment,
     };
 
-    const days = state.days.map(d => {
-      if (d.name === state.selectedDay) {
-        return { ...d, spots: d.spots - 1 };
-      } else {
-        return d;
-      }
-    });
+    let days = [...state.days];
 
-    return axios.put(`/api/appointments/${id}`, { interview })
+    console.log({ isEditing });
+
+    if (!isEditing) {
+      days = state.days.map((d) => {
+        if (d.name === state.selectedDay) {
+          return { ...d, spots: d.spots - 1 };
+        } else {
+          return d;
+        }
+      });
+    }
+
+    return axios
+      .put(`/api/appointments/${id}`, { interview })
       .then(() => {
         dispatch({ type: SET_INTERVIEW, value: { appointments, days } });
-      }).catch(error => {
+      })
+      .catch((error) => {
         throw error;
       });
   };
@@ -74,15 +78,15 @@ export default function useApplicationData() {
   const cancelInterview = (appointmentId) => {
     const appointment = {
       ...state.appointments[appointmentId],
-      interview: null
+      interview: null,
     };
 
     const appointments = {
       ...state.appointments,
-      [appointmentId]: appointment
+      [appointmentId]: appointment,
     };
 
-    const days = state.days.map(d => {
+    const days = state.days.map((d) => {
       if (d.name === state.selectedDay) {
         return { ...d, spots: d.spots + 1 };
       } else {
@@ -90,10 +94,12 @@ export default function useApplicationData() {
       }
     });
 
-    return axios.delete(`/api/appointments/${appointmentId}`)
+    return axios
+      .delete(`/api/appointments/${appointmentId}`)
       .then(() => {
         dispatch({ type: SET_INTERVIEW, value: { appointments, days } });
-      }).catch(error => {
+      })
+      .catch((error) => {
         throw error;
       });
   };
@@ -116,6 +122,6 @@ export default function useApplicationData() {
     state,
     setSelectedDay,
     bookInterview,
-    cancelInterview
+    cancelInterview,
   };
 }

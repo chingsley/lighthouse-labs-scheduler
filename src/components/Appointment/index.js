@@ -24,6 +24,7 @@ export default function Appointment(props) {
     props.interview ? SHOW : EMPTY
   );
   const [error, setError] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
   const onCancel = () => back();
 
@@ -40,7 +41,7 @@ export default function Appointment(props) {
     };
     transition(SAVING);
     props
-      .bookInterview(props.id, interview)
+      .bookInterview(props.id, interview, isEditing)
       .then((res2) => {
         transition(SHOW);
       })
@@ -64,6 +65,11 @@ export default function Appointment(props) {
       });
   };
 
+  const startEdit = () => {
+    transition(EDIT);
+    setIsEditing(true);
+  };
+
   useEffect(() => {
     if (mode === SHOW && !props.interview) {
       transition(EMPTY);
@@ -82,7 +88,7 @@ export default function Appointment(props) {
           <Show
             {...props.interview}
             onDelete={() => transition(CONFIRM)}
-            onEdit={() => transition(EDIT)}
+            onEdit={startEdit}
           />
         );
       case CREATE:

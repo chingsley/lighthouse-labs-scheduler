@@ -108,7 +108,7 @@ describe('<Application />', () => {
     // 2. Wait until the text "Archie Cohen" is displayed.
     await waitForElement(() => getByText(container, 'Archie Cohen'));
 
-    // 3. Click the "Delete" button on the booked appointment (the show componet that has interviewer name = 'Archie Cohen').
+    // 3. Click the "Delete" button on the booked appointment (the show componet that has student name = 'Archie Cohen').
     const appointments = getAllByTestId(container, 'appointment');
     const appointment = appointments.find((appnt) =>
       queryByText(appnt, 'Archie Cohen')
@@ -141,6 +141,47 @@ describe('<Application />', () => {
     // debug(daylistItemMonday);
     expect(
       getByText(daylistItemMonday, '2 spots remaining')
+    ).toBeInTheDocument();
+  });
+  it('loads data, edits an interview and keeps the spots remaining for Monday the same', async () => {
+    // 0. Define Test variables
+    const oldStudentName = 'Archie Cohen';
+    const newStudentName = 'John Lock';
+    // 1. Render the Application.
+    const { container, debug } = render(<Application />);
+
+    // 2. Wait until the text "Archie Cohen" is displayed.
+    await waitForElement(() => getByText(container, oldStudentName));
+
+    // 3. Click the "Edit" button on the booked appointment.
+    const appointments = getAllByTestId(container, 'appointment');
+    const appointment = appointments.find((appntmt) =>
+      queryByText(appntmt, oldStudentName)
+    );
+    fireEvent.click(getByAltText(appointment, 'Edit'));
+    // 4. Change the student name
+    fireEvent.change(getByPlaceholderText(appointment, /enter student name/i), {
+      target: { value: newStudentName }, // set new student name to 'John Brown'
+    });
+
+    // 5. Click the "Save" button to save the changes.
+    fireEvent.click(getByText(appointment, 'Save'));
+
+    // 6. Check that the element with the text "Saving" is displayed.
+    expect(getByText(appointment, 'Saving')).toBeInTheDocument();
+
+    // 7. Wait until the 'Saving' status leaves the DOM, then check if new student name ('John Lock') is displayed
+    await waitForElementToBeRemoved(() => getByText(appointment, 'Saving'));
+    expect(getByText(appointment, newStudentName)).toBeInTheDocument();
+
+    // 8. Check that the DayListItem with the text "Monday" still has the text "1 spot remaining".
+    const daylistItems = getAllByTestId(container, 'day');
+    const daylistItemMonday = daylistItems.find((dayListItem) =>
+      queryByText(dayListItem, 'Monday')
+    );
+    debug(daylistItemMonday);
+    expect(
+      getByText(daylistItemMonday, '1 spot remaining')
     ).toBeInTheDocument();
   });
 });
