@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 import {
   render,
@@ -179,7 +180,59 @@ describe('<Application />', () => {
     const daylistItemMonday = daylistItems.find((dayListItem) =>
       queryByText(dayListItem, 'Monday')
     );
-    debug(daylistItemMonday);
+    expect(
+      getByText(daylistItemMonday, '1 spot remaining')
+    ).toBeInTheDocument();
+  });
+  it('shows the save error when failing to save an appointment', async () => {
+    axios.put.mockRejectedValueOnce('Something went wrong');
+    // 1. Render the Application.
+    const { container, debug } = render(<Application />);
+
+    // 2. Wait until the text "Archie Cohen" is displayed.
+    await waitForElement(() => getByText(container, 'Archie Cohen'));
+
+    // // 3. Click the "Edit" button on the booked appointment.
+    const appointments = getAllByTestId(container, 'appointment');
+    const appointment = appointments.find((appntmt) =>
+      queryByText(appntmt, 'Archie Cohen')
+    );
+    fireEvent.click(getByAltText(appointment, 'Edit'));
+
+    // 4. Change the student name
+    fireEvent.change(getByPlaceholderText(appointment, /enter student name/i), {
+      target: { value: 'John Lock' },
+    });
+
+    // 5. Click the "Save" button to save the changes.
+    fireEvent.click(getByText(appointment, 'Save'));
+
+    // 6. Check that the element with the text "Saving" is displayed.
+    expect(getByText(appointment, 'Saving')).toBeInTheDocument();
+
+    // 7. Wait until the 'Saving' status leaves the DOM, then check that error message is shown
+    await waitForElementToBeRemoved(() => getByText(appointment, 'Saving'));
+    expect(
+      getByText(appointment, 'Failed to save Appointment')
+    ).toBeInTheDocument();
+
+    // 8. Click the 'close (x) button, and expect to return to the form in edit mode
+    fireEvent.click(getByAltText(appointment, 'Close'));
+    expect(getByPlaceholderText(appointment, /enter student name/i).value).toBe(
+      'Archie Cohen'
+    );
+
+    // 9. click the 'Cancel' button on the form, and expect to return to show mode
+    fireEvent.click(getByText(appointment, 'Cancel'));
+    expect(getByText(appointment, 'Archie Cohen')).toBeInTheDocument();
+    expect(getByAltText(appointment, 'Edit')).toBeInTheDocument();
+    expect(getByAltText(appointment, 'Delete')).toBeInTheDocument();
+
+    // 10. Check that the DayListItem with the text "Monday" still has the text "1 spot remaining".
+    const daylistItems = getAllByTestId(container, 'day');
+    const daylistItemMonday = daylistItems.find((dayListItem) =>
+      queryByText(dayListItem, 'Monday')
+    );
     expect(
       getByText(daylistItemMonday, '1 spot remaining')
     ).toBeInTheDocument();
