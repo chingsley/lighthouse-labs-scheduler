@@ -87,4 +87,12 @@ export default {
       data: { success: true },
     });
   }),
+  delete: jest.fn((url) => {
+    // console.log({ url, interview });
+    return Promise.resolve({
+      status: 204,
+      statusText: 'Ok',
+      data: 'no response',
+    });
+  }),
 };
