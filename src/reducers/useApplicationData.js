@@ -53,8 +53,6 @@ export default function useApplicationData() {
 
     let days = [...state.days];
 
-    console.log({ isEditing });
-
     if (!isEditing) {
       days = state.days.map((d) => {
         if (d.name === state.selectedDay) {

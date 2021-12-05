@@ -47,7 +47,10 @@ export default function Appointment(props) {
       })
       .catch((err) => {
         // console.log({ err });
-        setError(err.response.data.error || 'Failed to save Appointment');
+        setError(
+          (err.response && err.response.data && err.response.data.error) ||
+            'Failed to save Appointment'
+        );
         transition(ERROR, true);
       });
   };
