@@ -50,6 +50,13 @@
     "watchPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/.git/"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js",
+      "!src/hooks/useApplicationData.js",
+      "!src/reducer-with-websocket/useApplicationData.js",
+      "!src/utils/socketUtils.js"
     ]
   },
   "proxy": "http://localhost:8001"
