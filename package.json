@@ -14,9 +14,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "coverage": "npm test -- --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public --ci",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "cypress": "cypress open -P ."
   },
   "browserslist": {
     "production": [
@@ -42,12 +44,20 @@
     "@testing-library/react-hooks": "^7.0.2",
     "babel-loader": "^8.0.5",
     "node-sass": "^4.14.0",
+    "prop-types": "^15.7.2",
     "react-test-renderer": "^17.0.2"
   },
   "jest": {
     "watchPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/.git/"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js",
+      "!src/hooks/useApplicationData.js",
+      "!src/reducer-with-websocket/useApplicationData.js",
+      "!src/utils/socketUtils.js"
     ]
   },
   "proxy": "http://localhost:8001"

@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import InterviewerList from 'components/InterviewerList';
 import Button from 'components/Button';
+import {
+  INTERVIEWER_NOT_SELECTED,
+  STUDENT_NAME_REQUIRED,
+} from 'constants/messages';
 
 export default function Form(props) {
   const [student, setStudent] = useState(props.student || '');
   const [interviewer, setInterviewer] = useState(props.interviewer || null);
+  const [inputError, setInputError] = useState(null);
 
   function reset() {
     setStudent('');
@@ -18,6 +23,15 @@ export default function Form(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
+
+    if (!student) {
+      setInputError(STUDENT_NAME_REQUIRED);
+      return;
+    }
+    if (!interviewer) {
+      setInputError(INTERVIEWER_NOT_SELECTED);
+      return;
+    }
 
     props.onSave(student, interviewer);
   }
@@ -33,9 +47,12 @@ export default function Form(props) {
             placeholder='Enter Student Name'
             value={student}
             onChange={(event) => {
+              setInputError(null);
               setStudent(event.target.value);
             }}
+            data-testid='student-name-input'
           />
+          <p className='appointment__validation'>{inputError}</p>
         </form>
         <InterviewerList
           interviewers={props.interviewers}
