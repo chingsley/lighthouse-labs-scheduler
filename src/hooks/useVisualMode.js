@@ -12,7 +12,7 @@ export default function useVisualMode(initial) {
     }
   }
   function back() {
-    // if there's only item in history, then we no mode to go back to
+    // if there's only one item in history, then we have no mode to go back to
     // therefore, history must have a minimum of 1 item at every point time
     // ... since mode = last item in history, if history is empty then mode would be undefined...
     // ... and we don't want that
@@ -28,3 +28,6 @@ export default function useVisualMode(initial) {
     back,
   };
 }
+
+
+
