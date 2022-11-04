@@ -122,6 +122,8 @@ export default function useApplicationData() {
       }
     };
 
+    // Check if and how to implement a cleanup function here for the websocket
+
   }, []);
 
   return {
