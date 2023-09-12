@@ -5,21 +5,23 @@ export default function useVisualMode(initial) {
 
   function transition(newMode, replaceLastMode = false) {
     if (replaceLastMode) {
-      setHistory((prev) => [...prev.slice(0, prev.length - 1), newMode]);
+      // setHistory((prev) => [...prev.slice(0, prev.length - 1), newMode]);
+      setHistory((prev) => [...prev.slice(0, - 1), newMode]);
     } else {
       // setHistory([...history, newMode]);
       setHistory(prev => [...prev, newMode]);
     }
   }
   function back() {
-    // if there's only item in history, then we no mode to go back to
+    // if there's only one item in history, then we have no mode to go back to
     // therefore, history must have a minimum of 1 item at every point time
     // ... since mode = last item in history, if history is empty then mode would be undefined...
     // ... and we don't want that
     if (history.length < 2) return;
 
     // remove last history item
-    setHistory((prev) => [...prev.slice(0, prev.length - 1)]);
+    // setHistory((prev) => [...prev.slice(0, prev.length - 1)]);
+    setHistory((prev) => [...prev.slice(0, - 1)]);
   }
 
   return {
@@ -28,3 +30,6 @@ export default function useVisualMode(initial) {
     back,
   };
 }
+
+
+

@@ -25,6 +25,7 @@ export default function Appointment(props) {
   );
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [userInput, setUserInput] = useState({});
 
   const onCancel = () => back();
 
@@ -39,6 +40,7 @@ export default function Appointment(props) {
       student: name,
       interviewer,
     };
+    setUserInput(interview);
     transition(SAVING);
     props
       .bookInterview(props.id, interview, isEditing)
@@ -49,7 +51,7 @@ export default function Appointment(props) {
         // console.log({ err });
         setError(
           (err.response && err.response.data && err.response.data.error) ||
-            'Failed to save Appointment'
+          'Failed to save Appointment'
         );
         transition(ERROR, true);
       });
@@ -65,7 +67,7 @@ export default function Appointment(props) {
       .catch((err) => {
         setError(
           (err.response && err.response.data && err.response.data.error) ||
-            'Could not cancel Appointment'
+          'Could not cancel Appointment'
         );
         transition(ERROR, true);
       });
@@ -103,6 +105,7 @@ export default function Appointment(props) {
             onCancel={onCancel}
             interviewers={props.interviewers}
             onSave={save}
+            userInput={userInput}
           />
         );
       case EDIT:
@@ -113,6 +116,7 @@ export default function Appointment(props) {
             interviewers={props.interviewers}
             onCancel={onCancel}
             onSave={save}
+            userInput={userInput}
           />
         );
       case SAVING:

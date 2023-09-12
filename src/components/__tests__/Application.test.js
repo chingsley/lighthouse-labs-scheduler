@@ -221,7 +221,7 @@ describe('<Application />', () => {
     // 8. Click the 'close (x) button, and expect to return to the form in edit mode
     fireEvent.click(getByAltText(appointment, 'Close'));
     expect(getByPlaceholderText(appointment, /enter student name/i).value).toBe(
-      'Archie Cohen'
+      'John Lock'
     );
 
     // 9. click the 'Cancel' button on the form, and expect to return to show mode
