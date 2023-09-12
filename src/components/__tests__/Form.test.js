@@ -21,7 +21,7 @@ describe('Form', () => {
   });
   it('renders without student name if not provided', () => {
     const { getByPlaceholderText } = render(
-      <Form interviewers={interviewers} />
+      <Form interviewers={interviewers} userInput={{}} />
     );
     expect(getByPlaceholderText('Enter Student Name')).toHaveValue('');
   });
@@ -29,14 +29,14 @@ describe('Form', () => {
   it('renders with initial student name', () => {
     const student = 'Lydia Miller-Jones';
     const { getByTestId } = render(
-      <Form interviewers={interviewers} student={student} />
+      <Form interviewers={interviewers} student={student} userInput={{}} />
     );
     expect(getByTestId('student-name-input')).toHaveValue(student);
   });
   it('validates that the student name is not blank', () => {
     const onSave = jest.fn();
     const { getByText } = render(
-      <Form interviewers={interviewers} onSave={onSave} />
+      <Form interviewers={interviewers} onSave={onSave} userInput={{}} />
     );
     fireEvent.click(getByText('Save'));
     expect(getByText(/student name cannot be blank/i)).toBeInTheDocument();
@@ -58,6 +58,7 @@ describe('Form', () => {
         onSave={onSave}
         student={interview.student}
         interviewer={interview.interviewer}
+        userInput={{}}
       />
     );
     fireEvent.click(getByText('Save'));
@@ -74,7 +75,7 @@ describe('Form', () => {
   it('submits the name entered by the user', () => {
     const onSave = jest.fn();
     const { getByText, getByPlaceholderText, getAllByTestId } = render(
-      <Form interviewers={interviewers} onSave={onSave} />
+      <Form interviewers={interviewers} onSave={onSave} userInput={{}} />
     );
 
     const input = getByPlaceholderText('Enter Student Name');
@@ -113,7 +114,7 @@ describe('Form', () => {
   it('can successfully save after trying to submit an empty student name', () => {
     const onSave = jest.fn();
     const { getByText, getByPlaceholderText, queryByText, getAllByTestId } =
-      render(<Form interviewers={interviewers} onSave={onSave} />);
+      render(<Form interviewers={interviewers} onSave={onSave} userInput={{}} />);
 
     fireEvent.click(getByText('Save'));
 
@@ -156,6 +157,7 @@ describe('Form', () => {
         name='Lydia Mill-Jones'
         onSave={jest.fn()}
         onCancel={onCancel}
+        userInput={{}}
       />
     );
 
