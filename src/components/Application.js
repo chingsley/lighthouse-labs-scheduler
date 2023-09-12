@@ -5,8 +5,8 @@ import DayList from 'components/DayList';
 import Appointment from './Appointment';
 import { getAppointmentsForDay, getInterviewersForDay, getInterview } from 'helpers/selectors';
 // import useApplicationData from 'hooks/useApplicationData';
-import useApplicationData from 'reducers/useApplicationData';
-// import useApplicationData from 'reducer-with-websocket/useApplicationData';
+// import useApplicationData from 'reducers/useApplicationData';
+import useApplicationData from 'reducer-with-websocket/useApplicationData';
 
 /**
  *
